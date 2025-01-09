@@ -2,6 +2,8 @@ import { Formik } from "formik";
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useHistory } from "react-router-dom";
+import { useSelector } from "react-redux";
+
 import Loader from "../../components/loader";
 import LoadingButton from "../../components/loadingButton";
 import api from "../../services/api";
@@ -11,6 +13,7 @@ const NewList = () => {
   const [projects, setProjects] = useState([]);
   const [usersFiltered, setUsersFiltered] = useState(null);
   const [filter, setFilter] = useState({ status: "active", availability: "", search: "" });
+  const user = useSelector((state) => state.Auth.user);
 
   useEffect(() => {
     (async () => {
@@ -35,6 +38,11 @@ const NewList = () => {
         .filter((u) => !filter?.search || u.name.toLowerCase().includes(filter?.search.toLowerCase())),
     );
   }, [users, filter]);
+
+  useEffect(() => {
+    if (!users) return;
+    setUsers((users) => users.map((u) => (u._id === user._id ? { ...u, availability: user.availability } : u)));
+  }, [user]);
 
   if (!usersFiltered) return <Loader />;
 
@@ -71,7 +79,7 @@ const NewList = () => {
               </span>
             </div>
           </div>
-          <Create />
+          <Create setUsers={setUsers} />
         </div>
         <div className="overflow-x-auto">
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 py-6 gap-5 ">
@@ -85,7 +93,7 @@ const NewList = () => {
   );
 };
 
-const Create = () => {
+const Create = ({ setUsers }) => {
   const [open, setOpen] = useState(false);
 
   const history = useHistory();
@@ -114,8 +122,9 @@ const Create = () => {
                   const res = await api.post("/user", values);
                   if (!res.ok) throw res;
                   toast.success("Created!");
+                  setUsers((u) => [...u, res.data]);
                   setOpen(false);
-                  history.push(`/user/${res.data._id}`);
+                  // history.push(`/user/${res.data._id}`);
                 } catch (e) {
                   console.log(e);
                   toast.error("Some Error!", e.code);
@@ -139,7 +148,13 @@ const Create = () => {
                       {/* Password */}
                       <div className="w-full md:w-[48%] mt-2">
                         <div className="text-[14px] text-[#212325] font-medium	">Password</div>
-                        <input className="projectsInput text-[14px] font-normal text-[#212325] rounded-[10px]" name="password" value={values.password} onChange={handleChange} />
+                        <input
+                          className="projectsInput text-[14px] font-normal text-[#212325] rounded-[10px]"
+                          name="password"
+                          type="password"
+                          value={values.password}
+                          onChange={handleChange}
+                        />
                       </div>
                     </div>
                   </div>

@@ -44,7 +44,10 @@ router.post("/", passport.authenticate("user", { session: false }), async (req, 
   try {
     if (!validatePassword(req.body.password)) return res.status(400).send({ ok: false, user: null, code: PASSWORD_NOT_VALIDATED });
 
-    const user = await UserObject.create({ ...req.body, organisation: req.user.organisation });
+    const { username, ...restOfBody } = req.body;
+    const { organisation } = req.user;
+
+    const user = await UserObject.create({ ...restOfBody, name: username, organisation });
 
     return res.status(200).send({ data: user, ok: true });
   } catch (error) {

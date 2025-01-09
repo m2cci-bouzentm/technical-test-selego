@@ -45,7 +45,8 @@ const Section = ({ children, title }) => {
     <div>
       <h1
         className="flex gap-1 items-center uppercase text-[10px] text-gray-400 tracking-wide font-semibold mt-4 cursor-pointer hover:underline mb-2"
-        onClick={() => setOpen((o) => !o)}>
+        // onClick={() => setOpen((o) => !o)}
+        >
         {title}
       </h1>
 

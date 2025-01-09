@@ -2,6 +2,8 @@ import { Formik } from "formik";
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useHistory, useParams } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { setUser } from "../../redux/auth/actions";
 
 import Loader from "../../components/loader";
 import LoadingButton from "../../components/loadingButton";
@@ -9,6 +11,9 @@ import api from "../../services/api";
 
 export default () => {
   const [user, setUser] = useState(null);
+  const authenticatedUser = useSelector((state) => state.Auth.user);
+  const dispatch = useDispatch();
+
   const { id } = useParams();
   useEffect(() => {
     (async () => {
@@ -22,13 +27,13 @@ export default () => {
   return (
     <div>
       <div className="appContainer pt-24">
-        <Detail user={user} />
+        <Detail user={user} authenticatedUser={authenticatedUser} dispatch={dispatch} />
       </div>
     </div>
   );
 };
 
-const Detail = ({ user }) => {
+const Detail = ({ user, authenticatedUser, dispatch }) => {
   const history = useHistory();
 
   async function deleteData() {
@@ -36,6 +41,10 @@ const Detail = ({ user }) => {
     if (!confirm) return;
     await api.remove(`/user/${user._id}`);
     toast.success("successfully removed!");
+    if (authenticatedUser._id === user._id) {
+      dispatch(setUser(null));
+      return;
+    }
     history.push(`/user`);
   }
 
@@ -46,6 +55,7 @@ const Detail = ({ user }) => {
         try {
           await api.put(`/user/${user._id}`, values);
           toast.success("Updated!");
+          history.push(`/user`);
         } catch (e) {
           console.log(e);
           toast.error("Some Error!");
@@ -132,7 +142,7 @@ const Detail = ({ user }) => {
             </div>
 
             <div className="flex  mt-2">
-              <LoadingButton className="bg-[#0560FD] text-[16px] font-medium text-[#FFFFFF] py-[12px] px-[22px] rounded-[10px]" loading={isSubmitting} onChange={handleSubmit}>
+              <LoadingButton className="bg-[#0560FD] text-[16px] font-medium text-[#FFFFFF] py-[12px] px-[22px] rounded-[10px]" loading={isSubmitting} onClick={handleSubmit}>
                 Update
               </LoadingButton>
               <button className="ml-[10px] bg-[#F43F5E] text-[16px] font-medium text-[#FFFFFF] py-[12px] px-[22px] rounded-[10px]" onClick={deleteData}>
