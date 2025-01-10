@@ -35,8 +35,8 @@ const Activity = () => {
     <div className="w-screen md:w-full">
       <div className="flex flex-wrap gap-5 p-2 md:!px-8">
         <SelectProject
-          value={project || ""}
-          onChange={(e) => setProject(e ? e.name : "")}
+          value={project.name || ""}
+          onChange={(e) => setProject(e ? e : "")}
           className="w-[180px] bg-[#FFFFFF] text-[#212325] py-[10px] px-[14px] rounded-[10px] border-r-[16px] border-[transparent] cursor-pointer shadow-sm font-normal text-[14px]"
         />
         <SelectMonth start={-3} indexDefaultValue={3} value={date} onChange={(e) => setDate(e.target.value)} showArrows />
@@ -52,11 +52,11 @@ const Activities = ({ date, user, project }) => {
 
   useEffect(() => {
     (async () => {
-      const { data } = await api.get(`/activity?date=${date.getTime()}&user=${user.name}&project=${project}`);
+      const { data } = await api.get(`/activity?date=${date.getTime()}&user=${user.name}&projectId=${project && project._id}`);
       const projects = await api.get(`/project/list`);
       setActivities(
         data.map((activity) => {
-          return { ...activity, projectName: (activity.projectName = projects.data.find((project) => project._id === activity.projectId)?.name) };
+          return { ...activity, projectName: (activity.projectName = projects.data.find((project) => (project && project._id) === activity.projectId)?.name) };
         }),
       );
       setOpen(null);
