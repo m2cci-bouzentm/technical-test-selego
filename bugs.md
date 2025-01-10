@@ -25,3 +25,4 @@
     - when deleting a newly created project in the activity table, i get Deleted 500 response error cuz i hit /activity/undefined. as activities state doesn't hold the id of the activity. **SOLUTION: update activities state after receving ok response of adding a new acitivity with the activity id.
     - must refresh page to see changes, when deleting an activity. **SOLUTION: update activities state after receving ok response o fdeleting the activity
     
+    

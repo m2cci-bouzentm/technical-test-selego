@@ -35,8 +35,8 @@ const Activity = () => {
     <div className="w-screen md:w-full">
       <div className="flex flex-wrap gap-5 p-2 md:!px-8">
         <SelectProject
-          value={project}
-          onChange={(e) => setProject(e.name)}
+          value={project || ""}
+          onChange={(e) => setProject(e ? e.name : "")}
           className="w-[180px] bg-[#FFFFFF] text-[#212325] py-[10px] px-[14px] rounded-[10px] border-r-[16px] border-[transparent] cursor-pointer shadow-sm font-normal text-[14px]"
         />
         <SelectMonth start={-3} indexDefaultValue={3} value={date} onChange={(e) => setDate(e.target.value)} showArrows />
@@ -92,7 +92,7 @@ const Activities = ({ date, user, project }) => {
     for (let i = 0; i < activities.length; i++) {
       const res = await api.post(`/activity`, activities[i]);
       toast.success(`Saved ${activities[i].projectName}`);
-      updatedActivities.push({...activities[i], ...res.data});
+      updatedActivities.push({ ...activities[i], ...res.data });
     }
 
     setActivities(updatedActivities);
@@ -104,7 +104,7 @@ const Activities = ({ date, user, project }) => {
       await api.remove(`/activity/${activity._id}`);
       toast.success(`Deleted ${activity.projectName}`);
       setActivities((preActivities) => {
-        return preActivities.filter((a) => (a._id !== activity._id))
+        return preActivities.filter((a) => a._id !== activity._id);
       });
     }
   }
