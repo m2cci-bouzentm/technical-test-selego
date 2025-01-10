@@ -87,17 +87,25 @@ const Activities = ({ date, user, project }) => {
   };
 
   async function onSave() {
+    const updatedActivities = [];
+
     for (let i = 0; i < activities.length; i++) {
-      await api.post(`/activity`, activities[i]);
+      const res = await api.post(`/activity`, activities[i]);
       toast.success(`Saved ${activities[i].projectName}`);
+      updatedActivities.push({...activities[i], ...res.data});
     }
+
+    setActivities(updatedActivities);
   }
 
   async function onDelete(i) {
     if (window.confirm("Are you sure ?")) {
       const activity = activities[i];
       await api.remove(`/activity/${activity._id}`);
-      toast.success(`Deleted ${activity.project}`);
+      toast.success(`Deleted ${activity.projectName}`);
+      setActivities((preActivities) => {
+        return preActivities.filter((a) => (a._id !== activity._id))
+      });
     }
   }
 

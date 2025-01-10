@@ -16,9 +16,12 @@
 
 - projects
     - Craches when clicking on a project. **SOLUTION: used findOne instead find in the get("/projects/:id") as it is fetching a unique record (by id). find returns an array and findOne returns an object.
-    - New created project doesnt show directly on the projects list. **SOLUTION : update projects state after receivng an OK response of adding a project
-
-
-TODO
-- activities
+    - New created project doesnt show directly on the projects list, must refresh page. **SOLUTION : update projects state after receivng an OK response of adding a project
     -
+
+
+- activities
+    - when deleting a project in the activity table, i get deleted undefined notification. **SOLUTION: it was activity.project but it should be activity.projectName
+    - when deleting a newly created project in the activity table, i get Deleted 500 response error cuz i hit /activity/undefined. as activities state doesn't hold the id of the activity. **SOLUTION: update activities state after receving ok response of adding a new acitivity with the activity id.
+    - must refresh page to see changes, when deleting an activity. **SOLUTION: update activities state after receving ok response o fdeleting the activity
+    
